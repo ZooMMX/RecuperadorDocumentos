@@ -7,6 +7,7 @@ package recuperacion
 
 import recuperacion.exceptions.*;
 import java.util.logging.Logger;
+import recuperacion.JPA.*;
 
 
 /**
@@ -27,19 +28,31 @@ class MainGroovy {
     }
 
     static def prueba() {
-        Indexador idx = new Indexador();
-        
-        idx.guardarDocumento(new File("/Users/octavioruizcastillo/Downloads/commons-math-2.2/NOTICE.txt"))
-        idx.indexar()
-        /*
-        idx.descomposicionSVD()
-        idx.guardarIndices(9,9,9)
+        //probarIndexador()
+        //probarSVD()
+        probarRecuperador()
 
-        Recuperador r = new Recuperador();
-        r.busquedaCosenoLSI("OPTIMO", 180);
-        */
     }
+    static def probarIndexador() {
+        Indexador idx = new Indexador();
 
+        idx.guardarDocumento(new File("//Users/octavioruizcastillo/Downloads/empirismo.txt"))
+        idx.indexar()
+    }
+    static def probarRecuperador() {
+        Recuperador r = new Recuperador();
+        Documento   q = new Documento();
+        q.setContenido("reacción al positivismo");
+        q.setTipo("CONSULTA")
+        r.crearConsulta(q);
+
+        r.busquedaCosenoLSI("OPTIMO", q.getId());
+    }
+    static def probarSVD() {
+        Indexador idx = new Indexador();
+        idx.descomposicionSVD()
+        idx.guardarIndices(1,1,1)
+    }
     
 }
 

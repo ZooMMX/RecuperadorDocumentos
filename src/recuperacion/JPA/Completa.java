@@ -41,6 +41,9 @@ public class Completa implements Serializable {
     @Lob
     @Column(name = "lematizado")
     private String lematizado;
+    @Lob
+    @Column(name = "ruta")
+    private String ruta;
     @Basic(optional = false)
     @Column(name = "tipo")
     private String tipo;
@@ -75,6 +78,14 @@ public class Completa implements Serializable {
 
     public void setLematizado(String lematizado) {
         this.lematizado = lematizado;
+    }
+    
+    public String getRuta() {
+        return ruta;
+    }
+
+    public void setRuta(String ruta) {
+        this.ruta = ruta;
     }
 
     public String getTipo() {

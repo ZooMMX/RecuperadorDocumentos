@@ -45,6 +45,45 @@ class Recuperador extends PreProcesador {
         public def busquedaCosenoLSI(String k, Integer consulta) {
             MatrizSVDJpaController jpa      = new MatrizSVDJpaController();
             DocumentoJpaController document = new DocumentoJpaController();
+            def                    res      = []
+
+            try {
+                MatrizSVD m = jpa.findIndices(k)
+                Integer[] frecs = getFrecDoc(consulta) as Integer[]
+
+                RealMatrix q     = new Array2DRowRealMatrix(frecs as double[][]).transpose();
+                RealMatrix u     = new Array2DRowRealMatrix(m.u());
+                RealMatrix s     = new RealMatrixImpl(m.s()).inverse();
+
+                RealMatrix q2    = q.multiply(u.multiply(s));
+                RealMatrix v    = new RealMatrixImpl(m.v()).transpose();
+
+                def n = 0
+                document.findDocumentos().each() { doc ->
+                    final def sumNumerador = 0
+                    final def sumDenominador1 = 0
+                    final def sumDenominador2 = 0
+                    for(i in 0..m.getK()-1) {
+                        sumNumerador    += q2.getEntry(0,i)*v.getEntry(n, i)
+                        sumDenominador1 += Math.pow(q2.getEntry(0,i), 2)
+                        sumDenominador2 += Math.pow(v.getEntry(n,i), 2)
+                    }
+                    final def cos = sumNumerador / (Math.sqrt(sumDenominador1)*Math.sqrt(sumDenominador2))
+
+                    res << [doc.getId(), doc.getContenido(), Math.abs(cos)]
+
+                    n++
+                }
+                res.sort{a,b-> a[2].equals(b[2])? 0: Math.abs(a[2])<Math.abs(b[2])? -1: 1 }
+            } catch(Exception e) {
+                Logger.getLogger(Recuperador.class.getName()).log(Level.SEVERE, "No se actualizó LSI después de indexar documentos", e);
+            } finally {
+                return res
+            }
+        }
+    public def busquedaManhattanLSI(String k, Integer consulta) {
+            MatrizSVDJpaController jpa      = new MatrizSVDJpaController();
+            DocumentoJpaController document = new DocumentoJpaController();
 
             MatrizSVD m = jpa.findIndices(k)
             Integer[] frecs = getFrecDoc(consulta) as Integer[]
@@ -61,14 +100,87 @@ class Recuperador extends PreProcesador {
                 def n = 0
                 document.findDocumentos().each() { doc ->
                     final def sumNumerador = 0
-                    final def sumDenominador1 = 0
-                    final def sumDenominador2 = 0
+                    for(i in 0..m.getK()-1) {
+                        sumNumerador    += Math.abs(q2.getEntry(0,i)-v.getEntry(n, i))
+                    }
+                    final def cos = sumNumerador
+
+                    res << [doc.getId(), doc.getContenido(), cos]
+
+                    n++
+                }
+                res.sort{a,b-> a[2].equals(b[2])? 0: Math.abs(a[2])<Math.abs(b[2])? -1: 1 }
+            } catch(Exception e) {
+                Logger.getLogger(Recuperador.class.getName()).log(Level.SEVERE, "No se actualizó LSI después de indexar documentos", e);
+            } finally {
+                return res
+            }
+        }
+
+         public def busquedaEuclidianaLSI(String k, Integer consulta) {
+            MatrizSVDJpaController jpa      = new MatrizSVDJpaController();
+            DocumentoJpaController document = new DocumentoJpaController();
+
+            MatrizSVD m = jpa.findIndices(k)
+            Integer[] frecs = getFrecDoc(consulta) as Integer[]
+
+            RealMatrix q     = new Array2DRowRealMatrix(frecs as double[][]).transpose();
+            RealMatrix u     = new Array2DRowRealMatrix(m.u());
+            RealMatrix s     = new RealMatrixImpl(m.s()).inverse();
+            def        res   = []
+
+            try {
+                RealMatrix q2    = q.multiply(u.multiply(s));
+                RealMatrix v    = new RealMatrixImpl(m.v()).transpose();
+
+                def n = 0
+                document.findDocumentos().each() { doc ->
+                    final def sumNumerador = 0
+
+                    for(i in 0..m.getK()-1) {
+
+                        sumNumerador    += Math.pow(q2.getEntry(0,i)-v.getEntry(n, i),2)
+
+                    }
+                    final def cos =  Math.sqrt(sumNumerador)
+
+                    res << [doc.getId(), doc.getContenido(), cos]
+
+                    n++
+                }
+                res.sort{a,b-> a[2].equals(b[2])? 0: Math.abs(a[2])<Math.abs(b[2])? -1: 1 }
+            } catch(Exception e) {
+                Logger.getLogger(Recuperador.class.getName()).log(Level.SEVERE, "No se actualizó LSI después de indexar documentos", e);
+            } finally {
+                return res
+            }
+        }
+
+        public def busquedaProductoInternoLSI(String k, Integer consulta) {
+            MatrizSVDJpaController jpa      = new MatrizSVDJpaController();
+            DocumentoJpaController document = new DocumentoJpaController();
+
+            MatrizSVD m = jpa.findIndices(k)
+            Integer[] frecs = getFrecDoc(consulta) as Integer[]
+
+            RealMatrix q     = new Array2DRowRealMatrix(frecs as double[][]).transpose();
+            RealMatrix u     = new Array2DRowRealMatrix(m.u());
+            RealMatrix s     = new RealMatrixImpl(m.s()).inverse();
+            def        res   = []
+
+            try {
+                RealMatrix q2    = q.multiply(u.multiply(s));
+                RealMatrix v    = new RealMatrixImpl(m.v()).transpose();
+
+                def n = 0
+                document.findDocumentos().each() { doc ->
+                    final def sumNumerador = 0
+
                     for(i in 0..m.getK()-1) {
                         sumNumerador    += q2.getEntry(0,i)*v.getEntry(n, i)
-                        sumDenominador1 += Math.pow(q2.getEntry(0,i), 2)
-                        sumDenominador2 += Math.pow(v.getEntry(n,i), 2)
+
                     }
-                    final def cos = sumNumerador / (Math.sqrt(sumDenominador1)*Math.sqrt(sumDenominador2))
+                    final def cos = sumNumerador
 
                     res << [doc.getId(), doc.getContenido(), Math.abs(cos)]
 
@@ -107,12 +219,13 @@ class Recuperador extends PreProcesador {
         }
 
         @Override
-        public def contarFrecuencias() {
-            CompletaJpaController jpaCompleta = new CompletaJpaController();
-            TieneJpaController jpa  = new TieneJpaController();
-            TerminoJpaController jpaTerm = new TerminoJpaController();
+        private def contarFrecuencias() {
+            CompletaJpaController  jpaCompleta = new CompletaJpaController();
+            TieneJpaController     jpa         = new TieneJpaController();
+            TerminoJpaController   jpaTerm     = new TerminoJpaController();
+            DocumentoJpaController jpaDoc      = new DocumentoJpaController();
             
-            List terminos = doc.getLematizado().split(" ")
+            List terminos = doc.getLematizado().split(" ");
             
             def terms = jpaCompleta.getFrecuenciasConsulta(terminos)
 

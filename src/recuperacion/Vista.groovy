@@ -51,26 +51,32 @@ public class Vista {
 
             //Acción del botón ---[Buscar]---
             g.btnBuscar.actionPerformed = {
-                Thread.start {
-                    def idConsulta
-                    if(!g.txtConsulta.text.equals("")) {
-                        idConsulta = createConsulta(g.txtConsulta.text)
-                    } else {
-                        def selectedRowInt = g.tabConsultas.getSelectedRow()
-                        idConsulta = g.tabConsultas.getValueAt(selectedRowInt, 0) as Integer
-                    }
-
-                    switch(g.tipoConsulta.getSelectedValue()) {
-                        case "Euclidiana":
-                            buscarEuclidiana(idConsulta); break;
-                        case "Coseno":
-                            buscarCoseno(idConsulta); break;
-                        case "Coef. Dice":
-                            buscarDice(idConsulta); break;
-                        case "Coseno LSI":
-                        buscarCosenoLSI(g.listK.getSelectedValue(), idConsulta); break;
-                    }
+                
+                def idConsulta
+                if(!g.txtConsulta.text.equals("")) {
+                    idConsulta = createConsulta(g.txtConsulta.text)
+                } else {
+                    def selectedRowInt = g.tabConsultas.getSelectedRow()
+                    idConsulta = g.tabConsultas.getValueAt(selectedRowInt, 0) as Integer
                 }
+
+                switch(g.tipoConsulta.getSelectedValue()) {
+                    case "Euclidiana":
+                        buscarEuclidiana(idConsulta); break;
+                    case "Coseno":
+                        buscarCoseno(idConsulta); break;
+                    case "Coef. Dice":
+                        buscarDice(idConsulta); break;
+                    case "Coseno LSI":
+                        buscarCosenoLSI(g.listK.getSelectedValue(), idConsulta); break;
+                    case "Manhattan LSI":
+                        buscarManhattanLSI(g.listK.getSelectedValue(), idConsulta); break;
+                    case "Euclidiana LSI":
+                        buscarEuclidianaLSI(g.listK.getSelectedValue(), idConsulta); break;
+                    case "Producto Interno LSI":
+                        buscarProductoInternoLSI(g.listK.getSelectedValue(), idConsulta); break;
+                }
+                
                 g.txtConsulta.text = ""
             }
             //Inicialización de la vista 2/2
@@ -225,5 +231,36 @@ public class Vista {
 
         modeloResultados.setDataVector(a,b)
     }
+
+    def buscarManhattanLSI(String k, Integer idConsulta) {
+        Recuperador r = new Recuperador()
+        def consultas = r.busquedaManhattanLSI(k, idConsulta)
+
+        String[][] a = consultas
+        String[] b = ["ID", "Resultado", "Valor"]
+
+        modeloResultados.setDataVector(a,b)
+    }
+
+     def buscarEuclidianaLSI(String k, Integer idConsulta) {
+        Recuperador r = new Recuperador()
+        def consultas = r.busquedaEuclidianaLSI(k, idConsulta)
+
+        String[][] a = consultas
+        String[] b = ["ID", "Resultado", "Valor"]
+
+        modeloResultados.setDataVector(a,b)
+    }
+
+    def buscarProductoInternoLSI(String k, Integer idConsulta) {
+        Recuperador r = new Recuperador()
+        def consultas = r.busquedaProductoInternoLSI(k, idConsulta)
+
+        String[][] a = consultas
+        String[] b = ["ID", "Resultado", "Valor"]
+
+        modeloResultados.setDataVector(a,b)
+    }
+    
 }
 

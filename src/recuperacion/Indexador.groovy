@@ -31,13 +31,15 @@ class Indexador extends PreProcesador {
         DocumentoJpaController jpa = new DocumentoJpaController()
 
         doc = new Documento()
-        doc.setContenido(txtFile.getText())
+        txtFile.withReader { doc.setContenido(it.readLine()+it.readLine()) } //Guarda las primeras líneas del documento en BD
         doc.setTipo("DOCUMENTO")
+        doc.setRuta(txtFile.path)
         jpa.create(doc)
     }
 
     private SingularValueDecompositionImpl descomposicionSVD() {
         try {
+            System.out.println("check");
             def frecs = getTablaFrecuencias()
             RealMatrix rm = new Array2DRowRealMatrix(frecs as double[][]);
             SingularValueDecompositionImpl svd = new SingularValueDecompositionImpl(rm);
@@ -46,6 +48,8 @@ class Indexador extends PreProcesador {
         } catch(Exception e) {
             Logger.getLogger(Indexador.class.getName()).log(Level.SEVERE, "Base de datos vacía", e);
             return null;
+        } catch(Error err) {
+            Logger.getLogger(Indexador.class.getName()).log(Level.SEVERE, "Error: Memoria JVM llena", err);
         }
 
     }

@@ -79,12 +79,14 @@ public class Gui extends javax.swing.JFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Indexar documento"));
 
         btnIndexar.setText("Guardar e Indexar");
+        btnIndexar.setEnabled(false);
         btnIndexar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnIndexarActionPerformed(evt);
             }
         });
 
+        doc.setEnabled(false);
         jScrollPane1.setViewportView(doc);
 
         btnCargar.setText("Cargar e indexar");
@@ -306,7 +308,7 @@ public class Gui extends javax.swing.JFrame {
         btnBuscar.setText("Buscar");
 
         tipoConsulta.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Euclidiana", "Coseno", "Coseno LSI", "Coef. Dice" };
+            String[] strings = { "Euclidiana", "Coseno", "Coseno LSI", "Coef. Dice", "Manhattan LSI", "Euclidiana LSI", "Producto Interno LSI" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });

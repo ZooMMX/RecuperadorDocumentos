@@ -13,32 +13,48 @@ import snowball.*;
  * @author octavioruizcastillo
  */
 public class PreProcesador {
-    public Documento doc;
+    public    Documento         doc;
+    protected ArrayList<String> terminos;
 
     public def lematizar() {
-        DocumentoJpaController jpa     = new DocumentoJpaController();
-        SpanishStemmer         stem    = new SpanishStemmer();
+        DocumentoJpaController jpa       = new DocumentoJpaController();
+        SpanishStemmer         stem      = new SpanishStemmer();
+        def                    contenido;
 
-        String docLimpio     = doc.getContenido()
-        String docLematizado = "";
+        terminos  = new ArrayList<String>();
 
-        docLimpio = (docLimpio =~ "[^A-Za-z0-9 ]").replaceAll(" ") //Transforma todos los símbolos en espacios
-        docLimpio = (docLimpio =~ "[ \t]{2,}").replaceAll(" ") //Remueve espacios excedentes
-
-        docLimpio.split(" ").each {
-            stem.setCurrent(it)
-            stem.stem()
-            docLematizado += stem.getCurrent() + " ";
+        if(doc.getTipo()=="CONSULTA") {
+            contenido = doc.getContenido()
+        } else {
+            contenido = new File(doc.getRuta())
         }
-        doc.setLematizado(docLematizado);
-        jpa.edit(doc);
+
+        contenido.eachLine() { linea ->
+            final String docLimpio = linea;
+            docLimpio = (docLimpio =~ "[^A-Za-z0-9áéíóúÁÉÍÓÚñÑ ]").replaceAll(" ") //Transforma todos los símbolos en espacios
+            docLimpio = (docLimpio =~ "[ \t]{2,}").replaceAll(" ") //Remueve espacios excedentes
+
+            docLimpio.split(" ").each() { palabra ->
+                stem.setCurrent(palabra)
+                stem.stem()
+                final lexema = stem.getCurrent()
+                if(lexema.length() > 3) {
+                    terminos.add(lexema)
+                }
+            }
+
+        }
+        if(doc.getTipo()=="CONSULTA") {
+            doc.setLematizado(terminos.join(" "))
+            jpa.edit(doc)
+        }
+        
     }
 
     public def almacenarTerminos() {
         TerminoJpaController jpa = new TerminoJpaController();
 
-        doc.getLematizado().split(" ").each() {
-
+        terminos.each() {
             if(jpa.findTermino(it) == null) {
                 final Termino t = new Termino();
                 t.setNombre(it);
@@ -48,12 +64,12 @@ public class PreProcesador {
         }
     }
 
-    public def contarFrecuencias() {
+    protected def contarFrecuencias() {
 
         TieneJpaController   jpa     = new TieneJpaController();
         TerminoJpaController jpaTerm = new TerminoJpaController();
 
-        doc.getLematizado().split(" ").each() { termino ->
+        terminos.each() { termino ->
             TienePK pk = new TienePK(doc.getId(), termino);
 
             if(jpa.findTiene(pk) == null) {

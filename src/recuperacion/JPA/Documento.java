@@ -43,6 +43,9 @@ public class Documento implements Serializable {
     @Lob
     @Column(name = "lematizado")
     private String lematizado;
+    @Lob
+    @Column(name = "ruta")
+    private String ruta;
     @Basic(optional = false)
     @Column(name = "tipo")
     private String tipo;
@@ -75,6 +78,13 @@ public class Documento implements Serializable {
 
     public void setContenido(String contenido) {
         this.contenido = contenido;
+    }
+    public String getRuta() {
+        return ruta;
+    }
+
+    public void setRuta(String ruta) {
+        this.ruta = ruta;
     }
 
     public String getLematizado() {
