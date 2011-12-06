@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/snowball/MySpaStemmer.java</file>
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/recuperacion/MainGroovy.groovy</file>
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/recuperacion/Indexador.groovy</file>
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/recuperacion/PreProcesador.groovy</file>
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/recuperacion/Recuperador.groovy</file>
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/recuperacion/Util.java</file>
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/recuperacion/Vista.groovy</file>
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/recuperacion/Gui.java</file>
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/recuperacion/JPA/Documento.java</file>
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/recuperacion/JPA/Completa.java</file>
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/recuperacion/JPA/CompletaJpaController.java</file>
+        <file>file:/Users/octavioruizcastillo/AppDev/Proyectos/recuperacion/src/recuperacion/JPA/Termino.java</file>
+    </open-files>
 </project-private>
